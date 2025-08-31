@@ -1,15 +1,5 @@
-//react
-import { useState, Fragment } from "react";
 //mui
-import {
-  Button,
-  Typography,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
-import { AdsClick, Map } from "@mui/icons-material";
+import { Button, Typography } from "@mui/material";
 
 export function HText({ children, link }) {
   const openLink = () => {
@@ -30,38 +20,6 @@ export function SecText({ children }) {
     <Typography variant="overline" color="text.secondary">
       {children}
     </Typography>
-  );
-}
-
-function LongText({ children }) {
-  const [full, setFull] = useState(false);
-  const handleClose = () => {
-    setFull(false);
-  };
-
-  return (
-    <Fragment>
-      <InterActiveText action={() => setFull(true)}>
-        Info
-        <AdsClick fontSize="small" />
-      </InterActiveText>
-
-      <Dialog
-        open={full}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {children}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </Fragment>
   );
 }
 
