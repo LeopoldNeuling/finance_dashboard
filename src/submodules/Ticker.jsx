@@ -53,16 +53,28 @@ export function Ticker({ symbol, addNewTicker, deleteSelf }) {
             <HText link={tickerContent.weburl}>{tickerContent.name}</HText>
             <br />
 
+            <br />
             <Divider textAlign="left">
               <Typography color="text.secondary">Details</Typography>
             </Divider>
             <SecText>
-              <span>Market Cap: {tickerContent.marketCapitalization}</span>
-              <br />
-              <span>Exchange: {tickerContent.exchange}</span>
-              <br />
-              <span>Industry: {tickerContent.finnhubIndustry}</span>
-              <br />
+              <span className="data-display">
+                <b>Exchange:</b> {tickerContent.exchange}
+              </span>
+              <span className="data-display">
+                <b>Market Cap:</b>{" "}
+                <div>
+                  {tickerContent.marketCapitalization.toFixed(2)}
+                  <i>{` [${tickerContent.currency}]`}</i>
+                </div>
+              </span>
+              <span className="data-display">
+                <b>Outstanding Shares:</b>{" "}
+                {tickerContent.shareOutstanding.toFixed(2)}
+              </span>
+              <span className="data-display">
+                <b>Industry:</b> {tickerContent.finnhubIndustry}
+              </span>
             </SecText>
             <br />
 

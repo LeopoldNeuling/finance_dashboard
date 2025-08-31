@@ -6,9 +6,8 @@
   gap: 1vw;
 }
 
-.interActiveTickerBar {
+.data-display {
   display: flex;
   flex-direction: row;
-  width: 100%;
   justify-content: space-between;
 }
