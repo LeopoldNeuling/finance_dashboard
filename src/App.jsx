@@ -1,25 +1,33 @@
-import { useEffect } from "react";
+//react
+import { useState } from "react";
+//mui
+import { Box } from "@mui/material";
+import { Ticker } from "./submodules/Ticker";
+//components
 import "./App.css";
 
-export const __key = import.meta.env.VITE_POLYGON_IO_KEY;
-
-const symbol = "AAPL";
-const ticker = `https://api.polygon.io/v3/reference/tickers/${symbol}?apiKey=${__key}`;
-const relatedTicker = `https://api.polygon.io/v1/related-companies/${symbol}?apiKey=${__key}`;
-
 export default function App() {
-  //const [response, setResponse] = useState()
-  useEffect(() => {
-    const firstFetch = async () => {
-      const fetching = await fetch(relatedTicker);
-      const response = await fetching.json();
-    };
-    firstFetch();
-  }, []);
-}
+  const [tickers, setTickers] = useState(["AAPL"]);
 
-/**
- * ticker card          (new)<-
- * info                        |
- * related ticker -> onclick ->
- */
+  const pushTicker = (symbol) => {
+    if (confirm(`Add "${symbol}" to Dashboard?`))
+      setTickers((prev) => [...prev, symbol]);
+  };
+  const popTicker = (deleteTicker) => {
+    if (confirm(`Delete "${deleteTicker}" from Dashboard?`))
+      setTickers((prev) => prev.filter((symbol) => symbol !== deleteTicker));
+  };
+
+  return (
+    <Box className="container">
+      {tickers.map((ticker, i) => (
+        <Ticker
+          key={i}
+          symbol={ticker}
+          addNewTicker={(name) => pushTicker(name)}
+          deleteSelf={() => popTicker(ticker)}
+        />
+      ))}
+    </Box>
+  );
+}

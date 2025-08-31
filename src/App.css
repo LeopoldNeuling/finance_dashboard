@@ -1,0 +1,14 @@
+.container {
+  margin: 1vw;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1vw;
+}
+
+.interActiveTickerBar {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
