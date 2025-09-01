@@ -1,5 +1,5 @@
 //react
-import { useState } from "react";
+import { useEffect, useState } from "react";
 //mui
 import { Box } from "@mui/material";
 import { Ticker } from "./submodules/Ticker";
@@ -8,6 +8,7 @@ import "./App.css";
 
 export default function App() {
   const [tickers, setTickers] = useState(["AAPL"]);
+  useEffect(() => console.log(tickers), [tickers]);
 
   const pushTicker = (symbol) => {
     if (confirm(`Add "${symbol}" to Dashboard?`))
@@ -24,8 +25,8 @@ export default function App() {
         <Ticker
           key={i}
           symbol={ticker}
-          addNewTicker={(name) => pushTicker(name)}
-          deleteSelf={() => popTicker(ticker)}
+          addNewTicker={(symbol) => pushTicker(symbol)}
+          deleteSelf={(symbol) => popTicker(symbol)}
         />
       ))}
     </Box>

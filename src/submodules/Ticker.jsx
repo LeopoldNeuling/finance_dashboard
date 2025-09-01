@@ -12,35 +12,89 @@ import {
 } from "@mui/material";
 import { DeleteForever } from "@mui/icons-material";
 //components
-import { SecText, HText } from "../helpers/TextElements";
+import { fetchFromFinnhub } from "../helper/FinnhubAPI";
 
-const __key = import.meta.env.VITE_FINNHUB_KEY;
+export function TickerHeader({ children, link }) {
+  const openLink = () => {
+    window.open(link, "__blank");
+  };
 
-const fetchFromFinnhub = async (url) => {
-  const response = await fetch(url);
-  return await response.json();
-};
+  return (
+    <>
+      <Button onClick={openLink}>
+        <Typography variant="h4" color="text.main" minHeight={100}>
+          {children}
+        </Typography>
+      </Button>
+      <br />
+    </>
+  );
+}
 
-export function Ticker({ symbol, addNewTicker, deleteSelf }) {
-  const tickerURL = `https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}&token=${__key}`;
-  const relatedTickerURL = `https://finnhub.io/api/v1/stock/peers?symbol=${symbol}&token=${__key}`;
+function TickerDataDisplay({ data }) {
+  return (
+    <>
+      <Divider textAlign="left">
+        <Typography color="text.secondary">Details</Typography>
+      </Divider>
+      <Typography variant="overline" color="text.secondary">
+        <span className="data-display">
+          <b>Exchange:</b> {data.exchange}
+        </span>
+        <span className="data-display">
+          <b>Market Cap:</b>{" "}
+          <div>
+            {data.marketCapitalization.toFixed(2)}
+            <i>{` [${data.currency}]`}</i>
+          </div>
+        </span>
+        <span className="data-display">
+          <b>Outstanding Shares:</b> {data.shareOutstanding.toFixed(2)}
+        </span>
+        <span className="data-display">
+          <b>Industry:</b> {data.finnhubIndustry}
+        </span>
+      </Typography>
+    </>
+  );
+}
 
-  const [tickerContent, setTickerContent] = useState();
+function RelatedTicker({ symbol, add }) {
+  const relatedTickerURL = `https://finnhub.io/api/v1/stock/peers?symbol=${symbol}`;
   const [relatedTickerContent, setRelatedContent] = useState([]);
 
-  const getTickerInfo = async () => {
-    const response = await fetchFromFinnhub(tickerURL);
-    setTickerContent(response);
-  };
+  useEffect(() => {
+    const getRelatedTicker = async () => {
+      const response = await fetchFromFinnhub(relatedTickerURL);
+      setRelatedContent(response);
+    };
+    getRelatedTicker();
+  }, []);
 
-  const getRelatedTicker = async () => {
-    const response = await fetchFromFinnhub(relatedTickerURL);
-    setRelatedContent(response);
-  };
+  return (
+    <>
+      <Divider textAlign="left">
+        <Typography color="text.secondary">Related Ticker</Typography>
+      </Divider>
+      {relatedTickerContent.map((item, idx) => (
+        <Button key={idx} onClick={() => add(item)}>
+          {item}
+        </Button>
+      ))}
+    </>
+  );
+}
+
+export function Ticker({ symbol, addNewTicker, deleteSelf }) {
+  const tickerURL = `https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}`;
+  const [tickerContent, setTickerContent] = useState();
 
   useEffect(() => {
+    const getTickerInfo = async () => {
+      const response = await fetchFromFinnhub(tickerURL);
+      setTickerContent(response);
+    };
     getTickerInfo();
-    getRelatedTicker();
   }, []);
 
   return (
@@ -50,46 +104,16 @@ export function Ticker({ symbol, addNewTicker, deleteSelf }) {
           <CardMedia component="img" image={tickerContent.logo} height={250} />
 
           <CardContent>
-            <HText link={tickerContent.weburl}>{tickerContent.name}</HText>
+            <TickerHeader link={tickerContent.weburl}>
+              {tickerContent.name}
+            </TickerHeader>
             <br />
-
+            <TickerDataDisplay data={tickerContent} />
             <br />
-            <Divider textAlign="left">
-              <Typography color="text.secondary">Details</Typography>
-            </Divider>
-            <SecText>
-              <span className="data-display">
-                <b>Exchange:</b> {tickerContent.exchange}
-              </span>
-              <span className="data-display">
-                <b>Market Cap:</b>{" "}
-                <div>
-                  {tickerContent.marketCapitalization.toFixed(2)}
-                  <i>{` [${tickerContent.currency}]`}</i>
-                </div>
-              </span>
-              <span className="data-display">
-                <b>Outstanding Shares:</b>{" "}
-                {tickerContent.shareOutstanding.toFixed(2)}
-              </span>
-              <span className="data-display">
-                <b>Industry:</b> {tickerContent.finnhubIndustry}
-              </span>
-            </SecText>
-            <br />
-
-            <Divider textAlign="left">
-              <Typography color="text.secondary">Related Ticker</Typography>
-            </Divider>
-            {relatedTickerContent && (
-              <>
-                {relatedTickerContent.map((item, idx) => (
-                  <Button key={idx} onClick={() => addNewTicker(item)}>
-                    {item}
-                  </Button>
-                ))}
-              </>
-            )}
+            <RelatedTicker
+              symbol={symbol}
+              add={(newSymbol) => addNewTicker(newSymbol)}
+            />
           </CardContent>
 
           <CardActions>
@@ -97,7 +121,7 @@ export function Ticker({ symbol, addNewTicker, deleteSelf }) {
               fullWidth
               color="error"
               variant="outlined"
-              onClick={deleteSelf}
+              onClick={() => deleteSelf(symbol)}
               endIcon={<DeleteForever />}
             >
               Delete
