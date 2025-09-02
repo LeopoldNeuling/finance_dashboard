@@ -1,9 +1,10 @@
 //react
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 //mui
 import { Box } from "@mui/material";
-import { Ticker } from "./submodules/Ticker";
 //components
+import Ticker from "./submodules/Ticker";
+import TickerNews from "./submodules/TickerNews";
 import "./App.css";
 
 export default function App() {
@@ -22,12 +23,14 @@ export default function App() {
   return (
     <Box className="container">
       {tickers.map((ticker, i) => (
-        <Ticker
-          key={i}
-          symbol={ticker}
-          addNewTicker={(symbol) => pushTicker(symbol)}
-          deleteSelf={(symbol) => popTicker(symbol)}
-        />
+        <Fragment key={i}>
+          <Ticker
+            symbol={ticker}
+            addNewTicker={(symbol) => pushTicker(symbol)}
+            deleteSelf={(symbol) => popTicker(symbol)}
+          />
+          <TickerNews symbol={ticker} />
+        </Fragment>
       ))}
     </Box>
   );

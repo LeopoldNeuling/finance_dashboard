@@ -14,7 +14,7 @@ import { DeleteForever } from "@mui/icons-material";
 //components
 import { fetchFromFinnhub } from "../helper/FinnhubAPI";
 
-export function TickerHeader({ children, link }) {
+function TickerHeader({ children, link }) {
   const openLink = () => {
     window.open(link, "__blank");
   };
@@ -60,12 +60,11 @@ function TickerDataDisplay({ data }) {
 }
 
 function RelatedTicker({ symbol, add }) {
-  const relatedTickerURL = `https://finnhub.io/api/v1/stock/peers?symbol=${symbol}`;
   const [relatedTickerContent, setRelatedContent] = useState([]);
 
   useEffect(() => {
     const getRelatedTicker = async () => {
-      const response = await fetchFromFinnhub(relatedTickerURL);
+      const response = await fetchFromFinnhub("related", symbol);
       setRelatedContent(response);
     };
     getRelatedTicker();
@@ -85,13 +84,12 @@ function RelatedTicker({ symbol, add }) {
   );
 }
 
-export function Ticker({ symbol, addNewTicker, deleteSelf }) {
-  const tickerURL = `https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}`;
+export default function Ticker({ symbol, addNewTicker, deleteSelf }) {
   const [tickerContent, setTickerContent] = useState();
 
   useEffect(() => {
     const getTickerInfo = async () => {
-      const response = await fetchFromFinnhub(tickerURL);
+      const response = await fetchFromFinnhub("profile", symbol);
       setTickerContent(response);
     };
     getTickerInfo();
